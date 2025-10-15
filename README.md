@@ -1,17 +1,30 @@
 # STORM release analysis
 
 ## Citation
-The code has been used to study the protein release from nanocarriers at the following scientific paper:
+This code was used to study protein release from nanocarriers in [1], and it was modified from the original code published in [2]:
 
-REF.
+[1] A. Solé-Porta, S. Pujals, P. Delcanale, A. Roig. STORM: a Tool to Track Cargo Release from Polymeric Nanocarriers at the Single-Particle Level.
 
-If you are publishing the results obtained with this code, remember to cite the previous publication. The code is licensed under the GNU GPLv3. See the LICENSE file for details. If you encounter any bugs, please feel free to contact asole@icmab.es.
+[2] P. Delcanale, L. Albertazzi. DNA-PAINT super-resolution imaging data of surface exposed active sites on particles. *Data in Brief*. **2020**, *30*, 105468. https://doi.org/10.1016/j.dib.2020.105468.
+
+If you use this code in your research or publish any results obtained with it, please cite both papers above.
 
 ## Introduction
-Explicar reference, main, fiducials channel
+
+This code was developed to analyze single-particle data obtained from stochastic optical reconstruction microscopy (STORM). Its main purpose is to detect individual nanocarriers (in our case, PLGA nanocapsules), determine their size and position, and quantify how many cargo molecules (in our case, the protein BSA) remain associated with each one. We used Cyanine 5 and Alexa Fluor 488 for the labeling of the nanocarriers and the protein, respectively. TetraSpeck microspheres were used as fiducial markers for drift correction.
+
+To do this, the code:
+
+1. Reads localization data from three channels: nanocarriers (**REFERENCE**), proteins (**MAIN**), and fiducial markers (**FIDUCIAL**).
+2. Identifies the centers of nanocarriers and fiducials using a mean shift clustering algorithm.
+3. Filters nanocarriers based on quality criteria such as size, shape, aggregation, and proximity to fiducials.
+4. Accurately estimates each particle’s radius.
+5. Assigns protein localizations to individual nanocarriers based on distance.
+
+The result is a particle-by-particle quantification that allows the study of nanocarrier features and cargo release.
 
 ## ReadCoords3.m
-*ReadCoords3.m* reads raw data from SMLM (TXT or CSV) obtained from SMLM analysis in NIS-elements (Nikon N-STORM) or ONI software, and extracts coordinates of interest for further processing. It generates three TXT files of three columns containing XYT coordinates of the **REFERENCE** (named *647* in the script), **MAIN** (named *488* in the script), and **FIDUCIAL** markers channels (named *Fid* in the script) to use for further processing. N-STORM files (TXT) are supposed to be 26-column, and columns 4-5-13 are read as X-Y-T. ONI files (CSV) are supposed to be 11-column, and columns 3-4-2 are read as X-Y-T.
+`ReadCoords3.m` reads raw data from SMLM (TXT or CSV) obtained from SMLM analysis in NIS-elements (Nikon N-STORM) or ONI software, and extracts coordinates of interest for further processing. It generates three TXT files of three columns containing XYT coordinates of the **REFERENCE** (named *647* in the script), **MAIN** (named *488* in the script), and **FIDUCIAL** markers channels (named *Fid* in the script) to use for further processing. N-STORM files (TXT) are supposed to be 26-column, and columns 4-5-13 are read as X-Y-T. ONI files (CSV) are supposed to be 11-column, and columns 3-4-2 are read as X-Y-T.
 
 #### Inputs
 - Required input parameters:
@@ -33,7 +46,7 @@ The command line to run the code would be:
 
 
 ## Cluster2_quantification.m
-*Cluster2_quantification.m* performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a defined distance from centers are stored. 
+`Cluster2_quantification.m` performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a defined distance from centers are stored. 
 
 #### Inputs
 - Required input parameters:
