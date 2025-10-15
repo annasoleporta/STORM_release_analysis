@@ -1,4 +1,12 @@
 # STORM release analysis
+
+## Citation
+The code has been used to study the protein release from nanocarriers at the following scientific paper:
+
+REF.
+
+If you are publishing the results obtained with this code, remember to cite the previous publication. The code is licensed under the GNU GPLv3. See the LICENSE file for details. If you encounter any bugs, please feel free to contact asole@icmab.es.
+
 ## Introduction
 Explicar reference, main, fiducials channel
 
