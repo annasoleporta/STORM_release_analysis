@@ -25,7 +25,7 @@ The command line to run the code would be:
 
 
 ## Cluster2_quantification.m
-*Cluster2_quantification.m* performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels in order to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a defined distance from centers are stored. 
+*Cluster2_quantification.m* performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a defined distance from centers are stored. 
 
 #### Inputs
 - Required input parameters:
@@ -37,15 +37,15 @@ The command line to run the code would be:
     - MaxDiam: maximum diameter of clusters in reference channel (longest axis), in nm.
     - FactorMaxDist: factor that multiplies the radius of each NC and defines the maximum distance between cluster center in reference channel and localization in main channel to be considered attached.
  - Optional input parameters:
-    - Elong: maximum ellipse elongation allowed, default=10 (elongation = ellipse_t.long_axis/ellipse_t.short_axis).
-    - ScaleFactor: scale factor in ellipse fit, default=1.0 (multiplicació termes el·lipse).
-    - MinClustDist: minimum distance between clusters to be considered isolated, in nm, default=300 nm (if distance > 300 nm, clusters are isolated).
-    - DistFidRef: distance between reference cluster and fiducial cluster to be considered a fiducial, in nm (if distance < 100 nm, the identified cluster in the reference channel is actually a fiducial marker).
+    - Elong: maximum ellipse elongation allowed, default=10 (long axis:short axis ratio).
+    - ScaleFactor: scale factor in ellipse fit, default=1.0 (multiplicative scale factor used in ellipse fitting).
+    - MinClustDist: minimum distance between clusters to be considered isolated, in nm, default=300 nm (if distance > MinClustDist, clusters are isolated).
+    - DistFidRef: threshold distance to label a reference cluster as a fiducial marker, in nm, default=100 nm (if distance < DistFidRef, the identified cluster in the reference channel is actually a fiducial marker).
 
 ### Outputs
 - *Fig1*: Plot of the localizations with the results of cluster filtering (clusters having a number of localizations above the threshold MinPts are fitted with an ellipse model). Magenta: selected clusters; Others: discarded (cyan: elongated; yellow: aggregated; blue: fiducial marker).
-- *Fig2*: Plot of the valid particles with the selected protein. Red circle indicates the nanocarrier size, while green circle contains the protein localizations associated with the particle.
-- *Fig3*: Histogram showing the number of protein localizations per particle.
+- *Fig2*: Plot of the valid particles with associated main localizations (protein). Red circle indicates the nanocarrier size, while green circle contains the protein localizations associated with the particle.
+- *Fig3*: Histogram showing the number of main (protein) localizations per particle.
 
 Imagine that we choose the following parameters: Bandwidth=50, MinPts=20, Maxdiameter=200, FactorMaxDist=1.3, Elong=10 (default), ScaleFactor=1 (default), MinClustDist=50, DistFidRef=100. The command line to run the could would be:
 
