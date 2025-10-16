@@ -30,7 +30,7 @@ The result is a particle-by-particle quantification that allows the study of nan
 ## ReadCoords3.m
 `ReadCoords3.m` reads raw data from SMLM (TXT or CSV) obtained from SMLM analysis in NIS-elements (Nikon N-STORM) or ONI software, and extracts coordinates of interest for further processing. It generates three TXT files of three columns containing XYT coordinates of the **REFERENCE** (647), **MAIN** (488), and **FIDUCIAL** markers channels (561) to use for further processing. N-STORM files (TXT) are supposed to be 26-column, and columns 4-5-13 are read as X-Y-T. ONI files (CSV) are supposed to be 11-column, and columns 3-4-2 are read as X-Y-T.
 
-#### Inputs
+#### :arrow_right: Inputs
 - Required input parameters:
     - FileName: name of the file with path and extension.
     - InputType: denotes the type of file, type `N-STORM` for Nikon software TXT files, or `ONI` for CSV files from ONI.
@@ -39,7 +39,7 @@ The result is a particle-by-particle quantification that allows the study of nan
     - STORMmain: **MAIN** channel name for N-STORM data.
     - STORMfid: **FIDUCIAL** markers channel name for N-STORM data.
  
-#### Outputs
+#### :arrow_right_hook: Outputs
 - `XYTref.txt`: X, Y, T(frames) coordinates of localizations in the **REFERENCE** channel (in our case, NCs 647), expressed in nm (*Ref* matrix).
 -	`XYTcoordinates.txt`: X, Y, T(frames) coordinates of localizations in the **MAIN** channel (in our case, protein 488), expressed in nm (*Main* matrix).
 -	`XYTfid.txt`: X, Y, T(frames) coordinates of localizations in the **FIDUCIAL** markers channel (in our case, TetraSpeck 561), expressed in nm (*Fid* matrix).
@@ -52,7 +52,7 @@ Example command:
 ## Cluster2_quantification.m
 `Cluster2_quantification.m` performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a size-adjusted distance from nanocarrier centers are stored. It uses the following auxiliary scripts located in the same folder: `MeanShiftCluster.m`, `fit_ellipse.m`, `fit_ellipse_aggregates.m`, and `fit_ellipse_fiducial.m`.
 
-#### Inputs
+#### :arrow_right: Inputs
 - Required input parameters:
     - FileNameMain: name of the file with XYT coords of **MAIN** channel with path and extension.
     - FileNameRef: name of the file with XYT coords of **REFERENCE** channel with path and extension.
@@ -68,7 +68,7 @@ Example command:
     - MinClustDist: minimum distance between clusters to be considered isolated, in nm, default=300 nm (if distance > MinClustDist, clusters are isolated).
     - DistFidRef: threshold distance to label a reference cluster as a fiducial marker, in nm, default=100 nm (if distance < DistFidRef, the identified cluster in the reference channel is actually a fiducial marker).
 
-#### Outputs
+#### :arrow_right_hook: Outputs
 - `Fig1_ValidNC.fig`: Plot of the localizations with the results of cluster filtering.
 - `Fig2_SelectedProt.fig`: Plot of the valid particles with associated main localizations (protein). Red circle indicates the nanocarrier size, while green circle contains the protein localizations associated with the particle.
 - `Fig3_Histogram.fig`: Histogram showing the number of main (protein) localizations per particle.
