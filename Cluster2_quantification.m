@@ -44,8 +44,7 @@ validChar = @(x) ischar(x);
 defaultElong = 10.0; %elongation in ellipse fit
 defaultScaleFactor= 1.0; %scale factor in ellipse fit
 defaultMinClustDist = 300.0; % min distance between clusters
-defaultDistFidRef = 70.0; % distance between NC and fid
-%defaultAggrDist = defaultMinClustDist; % min distance between clusters to be non-aggregate, by default like MinClustDist
+defaultDistFidRef = 100.0; % distance between NC and fid
 
 %define required and optional input parameters:
 addRequired(p,'FileNameMain',validChar);
@@ -60,7 +59,6 @@ addParameter(p,'Elong', defaultElong, validNum);
 addParameter(p,'ScaleFactor', defaultScaleFactor, validNum);
 addParameter(p,'MinClustDist', defaultMinClustDist, validNum);
 addParameter(p,'DistFidRef', defaultDistFidRef, validNum);
-%addParameter(p,'AggrDist', defaultAggrDist, validNum);
 
 %read input values:
 parse(p,FileNameMain, FileNameRef, FileNameFid, Bandwidth, MinPts, MaxDiam, FactorMaxDist, varargin{:});
@@ -71,12 +69,7 @@ MaxParticleElongation = p.Results.Elong; % max elongation allowed in ellipse fit
 EllipseFitScaleFactor = p.Results.ScaleFactor; % scale factor in ellipse fit 
 MinClustDist = p.Results.MinClustDist; % min distance of closest cluster to be considered isolated
 DistFidRef = p.Results.DistFidRef;
-%distanceAggregates = p.Results.AggrDist; % min distance between clusters to be non-aggregate
 
-% % if not introduced, by default distance aggregate is set as MinClustDist:
-% if (MinClustDist ~= defaultMinClustDist) && (distanceAggregates == defaultAggrDist)
-%     distanceAggregates = defaultMinClustDist;
-%     
 
 %%% Read coordinates ======================================================
 
@@ -132,6 +125,7 @@ plot(XCoordsFid,YCoordsFid,'.b'); axis equal; hold on;
 title({'Magenta: valid, Cyan: elongated, Yellow: aggregated, Blue: fiducials'});
 xlabel("x (nm)"); ylabel("y (nm)");
 
+
 %%% Clustering in FID channel =============================================
 
 % Clustering using mean-shift:
@@ -153,7 +147,7 @@ NClustRef = numel(clustMembsCellRef);
 disp(strcat(['Found ' num2str(NClustRef) ' clusters in REF channel']));
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%% FILTERING REF CHANNEL %%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FILTERING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp('Filtering REF channel...');
 RightClustRef=1:1:NClustRef; % Initialization cluster indexes;
 massCenter=clustCentRef; %Initialization centers coords of clusters;
@@ -236,8 +230,8 @@ clustMembsCellRef_elong = clustMembsCellRef_agg(IndexRightClustRef_elong);
 
 %%% Filter by localization number in FID channel
 disp('Filtering FID channel...');
- RightClustFid=1:1:NClustFid; % Intialization cluster indexes; conté els índexs de tots els clusters FID, que van de 1 a NClustFid
- massCenterFid=clustCentFid; %Initialization centers coords of clusters; conté les coords dels centres dels clusters FID
+ RightClustFid=1:1:NClustFid; % Intialization cluster indexes; contains the indices of all FID clusters, from 1 to NClustFid
+ massCenterFid=clustCentFid; %Initialization centers coords of clusters; contains the coordinates of the centers of the FID clusters
 
  IndexRightClustFid=false(NClustFid,1); % Initialization logical array to identify valid clusters
  r_fid=0; % Counter for clusters excluded due to few localizations
@@ -251,9 +245,9 @@ disp('Filtering FID channel...');
 end
 disp(strcat( [num2str(r_fid) ' FID clusters have been excluded because of few localizations']));
 
-RightClustFid=RightClustFid(IndexRightClustFid); %índexs clusters FID filtrats
-massCenterFid=massCenterFid(:,IndexRightClustFid); %centres clusters FID filtrats
-clustMembsCellFid=clustMembsCellFid(IndexRightClustFid); %índexs punts clusters FID filtrats
+RightClustFid=RightClustFid(IndexRightClustFid); %indices of filtered FID cluster 
+massCenterFid=massCenterFid(:,IndexRightClustFid); %centers of filtered FID clusters
+clustMembsCellFid=clustMembsCellFid(IndexRightClustFid); %point indices of filtered FID clusters
 
 % Calculate the distance matrix between the filtered clusters and filtered fiducials
 distance_FidRef = pdist2(massCenter_elong', massCenterFid', 'euclidean');
@@ -322,7 +316,7 @@ Rcheck=zeros(nclusters,1);
 RCheckLow=5;
 RCheckHigh=400;
 discard=0;
-IndexToRemove=true(nclusters,1); % Pietro: logical array to remove index of cluster discarded
+IndexToRemove=true(nclusters,1); % logical array to remove index of cluster discarded
 for i=1:nclusters
     switch DataType
         %case 'HollowSphere'
@@ -406,6 +400,7 @@ for m=1:length(R)
     %axis([C(m,1)-500 C(m,1)+500 C(m,2)-500 C(m,2)+500])
 end
 
+
 %%% Identifying localizations in MAIN around each center ==================
 
 disp('Creating output...');
@@ -472,7 +467,7 @@ xlabel("Number of protein localizations"); ylabel("Number of NCs");
 
 %Save data
 
-save example/Cluster2_quantification_results/Loc2particleMain.txt A -ascii %XYT data of MAIN channel for each selected cluster
+%save example/Cluster2_quantification_results/Loc2particleMain.txt A -ascii %XYT data of MAIN channel for each selected cluster
 save example/Cluster2_quantification_results/CentersRef.txt C -ascii %XY data of centers of REF channel
 clustCentFid_T = clustCentFid';
 save example/Cluster2_quantification_results/CentersFid.txt clustCentFid_T -ascii %XY data of centers of FID channel
@@ -482,23 +477,21 @@ save example/Cluster2_quantification_results/ClustSizeMain.txt ClustSize -ascii 
 save example/Cluster2_quantification_results/ClustSizeRef.txt NPSizeRef -ascii %number of cy5 localizations of each NC
 
 diam=R*2;
-save example/Cluster2_quantification_results/NCdiameter.txt diam -ascii %diameter of NCs
+save example/Cluster2_quantification_results/DiametersRef.txt diam -ascii %diameter of NCs
 
 %Save figures
 
 figure(1); 
-saveas(gcf, 'example/Cluster2_quantification_results/Fig1_0h.fig');
-saveas(gcf, 'example/Cluster2_quantification_results/Fig1_0h.png');
+saveas(gcf, 'example/Cluster2_quantification_results/Fig1_ValidNC.fig');
+%saveas(gcf, 'example/Cluster2_quantification_results/Fig1.png');
 
 figure(2); 
-saveas(gcf, 'example/Cluster2_quantification_results/Fig2_Selectedprot_0h.fig');
+saveas(gcf, 'example/Cluster2_quantification_results/Fig2_SelectedProt.fig');
  
 figure(3); 
-saveas(gcf, 'example/Cluster2_quantification_results/Fig3_Histogram_0h.fig');
+saveas(gcf, 'example/Cluster2_quantification_results/Fig3_Histogram.fig');
 
 clearvars
 toc
 
 end
-
-%comentari de prova
