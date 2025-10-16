@@ -11,38 +11,38 @@ If you use this code in your research or publish any results obtained with it, p
 
 ## Introduction
 
-This code was developed to analyze single-particle data obtained from stochastic optical reconstruction microscopy (STORM). Its main purpose is to detect individual nanocarriers (in our case, PLGA nanocapsules), determine their size and position, and quantify how many cargo molecules (in our case, the protein BSA) remain associated with each one. We used Cyanine 5 and Alexa Fluor 488 for the labeling of the nanocarriers and the protein, respectively. TetraSpeck microspheres were used as fiducial markers for drift correction.
+This code was developed to analyze single-particle data obtained from stochastic optical reconstruction microscopy (STORM). Its main purpose is to detect individual nanocarriers (in our case, PLGA nanocapsules), determine their size and position, and quantify the amount of cargo (in our case, the protein BSA) that remains associated with each one. From these data, we can calculate the amount of protein that has been released. We use Cyanine 5 and Alexa Fluor 488 for the labeling of the nanocarriers and the protein, respectively. TetraSpeck microspheres are used as fiducial markers for drift correction. The workflow is divided into two main codes:
 
-To do this, the code:
+1. `ReadCoords3.m` reads localization data from three channels (nanocarriers (**REFERENCE**), proteins (**MAIN**), and fiducial markers (**FIDUCIAL**)) and generates TXT files with XYT coordinates of the three channels.
+2. `Cluster2_quantification.m`:
+    1. Reads the TXT files containing the XYT coordinates of the three channels.
+    2. Identifies the centers of nanocarriers and fiducials using a mean shift clustering algorithm.
+    3. Filters nanocarriers based on quality criteria, including size, shape, aggregation, and proximity to fiducial markers.
+    4. Accurately estimates each particle’s radius.
+    5. Assigns protein localizations to individual nanocarriers based on distance.
 
-1. Reads localization data from three channels: nanocarriers (**REFERENCE**), proteins (**MAIN**), and fiducial markers (**FIDUCIAL**).
-2. Identifies the centers of nanocarriers and fiducials using a mean shift clustering algorithm.
-3. Filters nanocarriers based on quality criteria such as size, shape, aggregation, and proximity to fiducials.
-4. Accurately estimates each particle’s radius.
-5. Assigns protein localizations to individual nanocarriers based on distance.
-
-The result is a particle-by-particle quantification that allows the study of nanocarrier features and cargo release.
+The result is a particle-by-particle quantification that allows the study of nanocarrier features and cargo release. 
 
 ## ReadCoords3.m
 `ReadCoords3.m` reads raw data from SMLM (TXT or CSV) obtained from SMLM analysis in NIS-elements (Nikon N-STORM) or ONI software, and extracts coordinates of interest for further processing. It generates three TXT files of three columns containing XYT coordinates of the **REFERENCE** (named *647* in the script), **MAIN** (named *488* in the script), and **FIDUCIAL** markers channels (named *Fid* in the script) to use for further processing. N-STORM files (TXT) are supposed to be 26-column, and columns 4-5-13 are read as X-Y-T. ONI files (CSV) are supposed to be 11-column, and columns 3-4-2 are read as X-Y-T.
 
 #### Inputs
 - Required input parameters:
-    - FileName: name of the file with extension, e.g. `STORM_raw_data_example.txt`
+    - FileName: name of the file with path and extension, e.g. `example/STORM_raw_data_example.txt`
     - InputType: denotes the type of file, type `N-STORM` for Nikon software TXT files, or `ONI` for CSV files from ONI.
-- Optional input parameters:
+- Optional input parameters for N-STORM data:
     - STORMref: **REFERENCE** channel name for N-STORM data.
     - STORMmain: **MAIN** channel name for N-STORM data.
     - STORMfid: **FIDUCIAL** markers channel name for N-STORM data.
  
 #### Outputs
-- `XYTref.txt`: X, Y, T(frames) coordinates of localization in the **REFERENCE** channel (in our case, NCs 647), expressed in nm (Ref matrix).
--	`XYTcoordinates.txt`: X, Y, T(frames) coordinates of localization in the **MAIN** channel (in our case, protein 488), expressed in nm (Main matrix).
--	`XYTfid.txt`: X, Y, T(frames) coordinates of localization in the **FIDUCIAL** markers channel (in our case, TetraSpeck 561), expressed in nm (Fid matrix).
+- `XYTref.txt`: X, Y, T(frames) coordinates of localizations in the **REFERENCE** channel (in our case, NCs 647), expressed in nm (*Ref* matrix).
+-	`XYTcoordinates.txt`: X, Y, T(frames) coordinates of localizations in the **MAIN** channel (in our case, protein 488), expressed in nm (*Main* matrix).
+-	`XYTfid.txt`: X, Y, T(frames) coordinates of localizations in the **FIDUCIAL** markers channel (in our case, TetraSpeck 561), expressed in nm (*Fid* matrix).
 
 The command line to run the code would be:
 
-    ReadCoords3('STORM_raw_data_example.txt', 'N-STORM', STORMref='405/647', STORMmain='405/488', STORMfid='Bead Drift Correction')
+    ReadCoords3('example/STORM_raw_data_example.txt', 'N-STORM', STORMref='405/647', STORMmain='405/488', STORMfid='Bead Drift Correction')
 
 
 ## Cluster2_quantification.m
