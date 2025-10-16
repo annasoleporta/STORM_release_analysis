@@ -483,13 +483,15 @@ save example/Cluster2_quantification_results/DiametersRef.txt diam -ascii %diame
 
 figure(1); 
 saveas(gcf, 'example/Cluster2_quantification_results/Fig1_ValidNC.fig');
-%saveas(gcf, 'example/Cluster2_quantification_results/Fig1.png');
+saveas(gcf, 'example/Cluster2_quantification_results/Fig1_ValidNC.png');
 
 figure(2); 
 saveas(gcf, 'example/Cluster2_quantification_results/Fig2_SelectedProt.fig');
+saveas(gcf, 'example/Cluster2_quantification_results/Fig2_SelectedProt.png');
  
 figure(3); 
 saveas(gcf, 'example/Cluster2_quantification_results/Fig3_Histogram.fig');
+saveas(gcf, 'example/Cluster2_quantification_results/Fig3_Histogram.png');
 
 clearvars
 toc
