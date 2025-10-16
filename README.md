@@ -1,4 +1,4 @@
-# STORM release analysis
+# STORM data treatment to study cargo release from nanocarriers
 
 ## Citation
 This code was used to study protein release from nanocarriers in [1], and it was modified from the original code published in [2]:
@@ -68,7 +68,7 @@ Example command:
     - MinClustDist: minimum distance between clusters to be considered isolated, in nm, default=300 nm (if distance > MinClustDist, clusters are isolated).
     - DistFidRef: threshold distance to label a reference cluster as a fiducial marker, in nm, default=100 nm (if distance < DistFidRef, the identified cluster in the reference channel is actually a fiducial marker).
 
-### Outputs
+#### Outputs
 - `Fig1_ValidNC.fig`: Plot of the localizations with the results of cluster filtering.
 - `Fig2_SelectedProt.fig`: Plot of the valid particles with associated main localizations (protein). Red circle indicates the nanocarrier size, while green circle contains the protein localizations associated with the particle.
 - `Fig3_Histogram.fig`: Histogram showing the number of main (protein) localizations per particle.
