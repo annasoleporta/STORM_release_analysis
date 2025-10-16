@@ -32,7 +32,7 @@ The result is a particle-by-particle quantification that allows the study of nan
 
 #### Inputs
 - Required input parameters:
-    - FileName: name of the file with path and extension, e.g. `example/STORM_raw_data_example.txt`
+    - FileName: name of the file with path and extension.
     - InputType: denotes the type of file, type `N-STORM` for Nikon software TXT files, or `ONI` for CSV files from ONI.
 - Optional input parameters for N-STORM data:
     - STORMref: **REFERENCE** channel name for N-STORM data.
@@ -54,9 +54,9 @@ Example command:
 
 #### Inputs
 - Required input parameters:
-    - FileNameMain: name of the file with XYT coords of **MAIN** channel with path and extension, e.g. `example/ReadCoords3_results/XYTcoordinates.txt`
-    - FileNameRef: name of the file with XYT coords of **REFERENCE** channel with path and extension, e.g. `example/ReadCoords3_results/XYTref.txt`
-    - FileNameFid: name of the file with XYT coords of **FIDUCIAL** channel with path and extension, e.g. `example/ReadCoords3_results/XYTfid.txt`
+    - FileNameMain: name of the file with XYT coords of **MAIN** channel with path and extension.
+    - FileNameRef: name of the file with XYT coords of **REFERENCE** channel with path and extension.
+    - FileNameFid: name of the file with XYT coords of **FIDUCIAL** channel with path and extension.
     - Bandwidth: parameter for clustering, in nm (half radius of particle).
     - MinPts: minimum number of localizations in a cluster.
     - MaxDiam: maximum diameter of clusters in reference channel (longest axis), in nm.
