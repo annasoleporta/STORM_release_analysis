@@ -50,7 +50,7 @@ Example command:
 
 
 ## Cluster2_quantification.m
-`Cluster2_quantification.m` performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a size-adjusted distance from nanocarrier centers are stored. It uses the following auxiliary scripts located in the same folder: `MeanShiftCluster.m`, `fit_ellipse.m`, `fit_ellipse_aggregates`, and `fit_ellipse_fiducial`.
+`Cluster2_quantification.m` performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a size-adjusted distance from nanocarrier centers are stored. It uses the following auxiliary scripts located in the same folder: `MeanShiftCluster.m`, `fit_ellipse.m`, `fit_ellipse_aggregates.m`, and `fit_ellipse_fiducial.m`.
 
 #### Inputs
 - Required input parameters:
