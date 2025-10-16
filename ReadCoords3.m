@@ -49,8 +49,9 @@ validNum = @(x) isreal(x);
 defaultSTORMref = '405/647'; % ref channel name for N-STORM data
 defaultSTORMmain = '405/488'; % main channel name for N-STORM data
 defaultSTORMfid = 'Bead Drift Correction'; % fid channel name for N-STORM data
-%defaultONIname = 1 ; % main channel name for ONI
-%defaultONIref = 0 ; % ref channel name for ONI
+defaultONIref = 1 ; % ref channel name for ONI
+defaultONImain = 2 ; % main channel name for ONI
+defaultONIfid = 0 ; % fid channel name for ONI
 
 %define required and optional input parameters:
 addRequired(p,'FileName',validChar);
@@ -59,8 +60,9 @@ addRequired(p,'InputType',validChar);
 addParameter(p,'STORMref', defaultSTORMref, validChar);
 addParameter(p,'STORMmain', defaultSTORMmain, validChar);
 addParameter(p,'STORMfid', defaultSTORMfid, validChar);
-%addParameter(p,'ONIname', defaultONIname, validNum);
-%addParameter(p,'ONIref', defaultONIref, validNum);
+addParameter(p,'ONIref', defaultONIref, validNum);
+addParameter(p,'ONImain', defaultONImain, validNum);
+addParameter(p,'ONIfid', defaultONIfid, validNum);
 
 %read input values:
 parse(p, FileName, InputType, varargin{:});
@@ -71,14 +73,15 @@ InputType = p.Results.InputType;
 STORMref = p.Results.STORMref;
 STORMmain = p.Results.STORMmain;
 STORMfid = p.Results.STORMfid;
-%ONIname = p.Results.ONIname;
-%ONIref = p.Results.ONIref;
+ONIref = p.Results.ONIref;
+ONImain = p.Results.ONImain;
+ONIfid = p.Results.ONIfid;
 
 switch InputType
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%------ TXT file from N-STORM --------------------------------------
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%------------------ TXT file from N-STORM ---------------------%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     case 'N-STORM'
 
@@ -96,16 +99,15 @@ switch InputType
         clear DataIn;
 
         %%%--- Split channel based on first column and generate output
-        %%%--- main channel is 647 (first column of TXT file)
         Channel647=strcmp(Channel{1},STORMref);%Check in the .txt if 647 or 405/647
         XCoords647=XCoords(Channel647);
         YCoords647=YCoords(Channel647);
         TCoords647=TCoords(Channel647);
-        Channel488=strcmp(Channel{1},STORMmain);%Check in the .txt if 647 or other name
+        Channel488=strcmp(Channel{1},STORMmain);%Check in the .txt if 488 or 405/488
         XCoords488=XCoords(Channel488);
         YCoords488=YCoords(Channel488);
         TCoords488=TCoords(Channel488);
-        ChannelFid=strcmp(Channel{1},STORMfid);%Check in the .txt if 647 or other name
+        ChannelFid=strcmp(Channel{1},STORMfid);%Check in the .txt the name
         XCoordsFid=XCoords(ChannelFid);
         YCoordsFid=YCoords(ChannelFid);
         TCoordsFid=TCoords(ChannelFid);
@@ -132,8 +134,8 @@ switch InputType
         
         
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%------ CSV file from ONI ------------------------------------------
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%--------------------- CSV file from ONI ----------------------%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     case 'ONI'
         
@@ -152,62 +154,40 @@ switch InputType
         
         
         %%%--- Split channel based on first column and generate output
-        Channel647= (Channel{1}==ONIname); % 647-channel  with 1
+        Channel647= (Channel{1}==ONIref); % 647-channel denoted with 1
         XCoords647=XCoords(Channel647);
         YCoords647=YCoords(Channel647);
         TCoords647=TCoords(Channel647);
-        ChannelFid= (Channel{1}==ONIref);%C Fiducial-channels denoted with 0
+        Channel488= (Channel{1}==ONImain); % 488-channel denoted with 2
+        XCoords488=XCoords(Channel488);
+        YCoords488=YCoords(Channel488);
+        TCoords488=TCoords(Channel488);
+        ChannelFid= (Channel{1}==ONIfid);%C Fiducial-channels denoted with 0
         XCoordsFid=XCoords(ChannelFid);
         YCoordsFid=YCoords(ChannelFid);
         TCoordsFid=TCoords(ChannelFid);
         
         %%%--- Export a txt file with XYT coords
-        n=length(XCoords647);
-        nref=length(XCoordsFid);
-        A=zeros(n,3);
+        nref=length(XCoords647);
+        nmain=length(XCoords488);
+        nfid=length(XCoordsFid);
         Ref=zeros(nref,3);
-        A(:,1)=XCoords647;
-        A(:,2)=YCoords647;
-        A(:,3)=TCoords647;
-        Ref(:,1)=XCoordsFid;
-        Ref(:,2)=YCoordsFid;
-        Ref(:,3)=TCoordsFid;
-        save XYTcoordinates.txt A -ascii
-        save XYTref.txt Ref -ascii
+        Main=zeros(nmain,3);
+        Fid=zeros(nfid,3);
+        Ref(:,1)=XCoords647;
+        Ref(:,2)=YCoords647;
+        Ref(:,3)=TCoords647;
+        Main(:,1)=XCoords488;
+        Main(:,2)=YCoords488;
+        Main(:,3)=TCoords488;
+        Fid(:,1)=XCoordsFid;
+        Fid(:,2)=YCoordsFid;
+        Fid(:,3)=TCoordsFid;
+        save example/ReadCoords3_results/XYTref.txt Ref -ascii
+        save example/ReadCoords3_results/XYTcoordinates.txt Main -ascii
+        save example/ReadCoords3_results/XYTfid.txt Fid -ascii
         
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%------ CSV file from Thunderstorm ---------------------------------
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%     
-    case 'THUNDER'
-    
-        %%%----- Read text file (check format)---
-        disp('Importing Thunder data...');
-        fileID = fopen(FileName,'r');
-        DataIn = textscan(fileID,'%f %f %f %f %f %f %f','Delimiter',',','HeaderLines',1); % Saving data as a cell, check the numb of columns 
-        fclose(fileID);
-        
-        %%%--- Retrieve useful information (channel, corrected XY location and frame number or the localization)
-        XCoords = cell2mat(DataIn(3));
-        YCoords = cell2mat(DataIn(4));
-        TCoords = cell2mat(DataIn(2));
-        XCoordsFid = 0; 
-        YCoordsFid = 0; 
-        TCoordsFid = 0;
-%         Channel = DataIn(1);
-        %clear DataIn;
-        
-        
-        %%%--- Split channel based on first column and generate output
-        %Channel647= (Channel{1}==1); % 647-channel denoted with 1
-        XCoords647=XCoords;
-        YCoords647=YCoords;
-        TCoords647=TCoords;
-%         ChannelFid= (Channel{1}==0);%C Fiducial-channels denoted with 0
-%         XCoordsFid=XCoords(ChannelFid);
-%         YCoordsFid=YCoords(ChannelFid);
-%         TCoordsFid=TCoords(ChannelFid);
-%         
+
     otherwise
         disp('invalid InputType!');
 end
