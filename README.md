@@ -11,7 +11,7 @@ If you use this code in your research or publish any results obtained with it, p
 
 ## Introduction
 
-This code was developed to analyze single-particle data obtained from stochastic optical reconstruction microscopy (STORM). Its main purpose is to detect individual nanocarriers (in our case, PLGA nanocapsules), determine their size and position, and quantify the amount of cargo (in our case, the protein BSA) that remains associated with each one. From these data, we can calculate the amount of protein that has been released. We use Cyanine 5 and Alexa Fluor 488 for the labeling of the nanocarriers and the protein, respectively. TetraSpeck microspheres are used as fiducial markers for drift correction. The workflow is divided into two main codes:
+This code was developed to analyze single-particle data obtained from stochastic optical reconstruction microscopy (STORM). Its main purpose is to detect individual nanocarriers (in our case, PLGA nanocapsules), determine their size and position, and quantify the amount of cargo (in our case, the protein BSA) that remains associated with each one. From these data, we can calculate the amount of protein that has been released. We use Cyanine 5 (Cy5) and Alexa Fluor 488 (AF488) for the labeling of the nanocarriers and the protein, respectively. TetraSpeck microspheres are used as fiducial markers for drift correction. The workflow is divided into two main codes:
 
 1. `ReadCoords3.m` reads localization data from three channels (nanocarriers (**REFERENCE**), proteins (**MAIN**), and fiducial markers (**FIDUCIAL**)) and generates TXT files with XYT coordinates of the three channels.
 2. `Cluster2_quantification.m`:
@@ -46,7 +46,7 @@ The command line to run the code would be:
 
 
 ## Cluster2_quantification.m
-`Cluster2_quantification.m` performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a defined distance from centers are stored. 
+`Cluster2_quantification.m` performs mean-shift clustering of XYT coordinates of **REFERENCE** and **FIDUCIAL** channels to roughly identify centers of valid particles and fiducial markers. Then, the localizations in **MAIN** channel within a defined distance from centers are stored. It requires other codes in the same file: `MeanShiftCluster.m`, `fit_ellipse.m`, `fit_ellipse_aggregates`, and `fit_ellipse_fiducial`.
 
 #### Inputs
 - Required input parameters:
@@ -64,9 +64,14 @@ The command line to run the code would be:
     - DistFidRef: threshold distance to label a reference cluster as a fiducial marker, in nm, default=100 nm (if distance < DistFidRef, the identified cluster in the reference channel is actually a fiducial marker).
 
 ### Outputs
-- *Fig1*: Plot of the localizations with the results of cluster filtering (clusters having a number of localizations above the threshold MinPts are fitted with an ellipse model). Magenta: selected clusters; Others: discarded (cyan: elongated; yellow: aggregated; blue: fiducial marker).
-- *Fig2*: Plot of the valid particles with associated main localizations (protein). Red circle indicates the nanocarrier size, while green circle contains the protein localizations associated with the particle.
-- *Fig3*: Histogram showing the number of main (protein) localizations per particle.
+- `Fig1_ValidNC.fig`: Plot of the localizations with the results of cluster filtering (clusters having a number of localizations above the threshold MinPts are fitted with an ellipse model). Magenta: valid clusters; Others: discarded (cyan: elongated; yellow: aggregated; blue: fiducial marker).
+- `Fig2_SelectedProt.fig`: Plot of the valid particles with associated main localizations (protein). Red circle indicates the nanocarrier size, while green circle contains the protein localizations associated with the particle.
+- `Fig3_Histogram.fig`: Histogram showing the number of main (protein) localizations per particle.
+- `CentersRef.txt`: data of centers of **REFERENCE** channel (NC).
+- `CentersFid.txt`: centers of **FIDUCIAL** channel (fiducial markers).
+- `ClustSizeRef.txt`: number of Cy5 localizations of each NC.
+- `ClustSizeMain.txt`: number of AF488 localizations of each NC.
+- `DiametersRef.txt`: diameter of each NC.
 
 Imagine that we choose the following parameters: Bandwidth=50, MinPts=20, Maxdiameter=200, FactorMaxDist=1.3, Elong=10 (default), ScaleFactor=1 (default), MinClustDist=50, DistFidRef=100. The command line to run the could would be:
 
