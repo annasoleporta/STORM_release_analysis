@@ -3,7 +3,7 @@
 ## Citation
 This code was used to study protein release from nanocarriers in [1], and it was modified from the original code published in [2]:
 
-[1] A. Solé-Porta, S. Pujals, P. Delcanale, A. Roig. STORM: a Tool to Track Cargo Release from Polymeric Nanocarriers at the Single-Particle Level.
+[1] A. Solé-Porta, S. Pujals, P. Delcanale, A. Roig. STORM as a tool to track cargo release from polymeric nanocarriers at the single-particle level. *Nanoscale Horizons*. **2026**. https://doi.org/10.1039/D5NH00855G
 
 [2] P. Delcanale, L. Albertazzi. DNA-PAINT super-resolution imaging data of surface exposed active sites on particles. *Data in Brief*. **2020**, *30*, 105468. https://doi.org/10.1016/j.dib.2020.105468.
 
